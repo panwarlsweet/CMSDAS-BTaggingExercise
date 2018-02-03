@@ -67,17 +67,20 @@ def main():
 
     # b-taggers
     bTaggers = [
-        'pfTrackCountingHighEffBJetTags',
-        'pfTrackCountingHighPurBJetTags',
-        'pfSimpleSecondaryVertexHighEffBJetTags',
-        'pfSimpleSecondaryVertexHighPurBJetTags',
-        'pfJetProbabilityBJetTags',
-        'pfJetBProbabilityBJetTags',
-        'pfCombinedInclusiveSecondaryVertexV2BJetTags'
+        #'pfTrackCountingHighEffBJetTags',
+        #'pfTrackCountingHighPurBJetTags',
+        #'pfSimpleSecondaryVertexHighEffBJetTags',
+        #'pfSimpleSecondaryVertexHighPurBJetTags',
+        #'pfJetProbabilityBJetTags',
+        #'pfJetBProbabilityBJetTags',
+        #'pfCombinedInclusiveSecondaryVertexV2BJetTags',
+        'pfDeepCSVJetTags:probb',
+        'pfDeepCSVJetTags:probbb'
+       # 'pfDeepCSVJetTags:probb'+'pfDeepCSVJetTags:probbb'
     ]
-    color = [kOrange, kRed, kCyan, kGreen, kMagenta, kBlue, kBlack]
-    legend = ['pfTCHE', 'pfTCHP', 'pfSSVHE', 'pfSSVHP', 'pfJP', 'pfJBP', 'pfCSVv2IVF']
-
+    color = [kOrange, kRed, kCyan, kGreen, kMagenta, kBlue, kBlack, kYellow+2, kPink]
+    #legend = ['pfTCHE', 'pfTCHP', 'pfSSVHE', 'pfSSVHP', 'pfJP', 'pfJBP', 'pfCSVv2IVF','pfDCSV:b','pfDCSV:bb']
+    legend = ['DeepCSV:b','DeepCSV:bb']
     # non-b flavors
     nonbs = ['c','udsg']
 

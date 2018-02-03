@@ -8,7 +8,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 
 options = VarParsing ('python')
 
-options.register('reportEvery', 10,
+options.register('reportEvery', 100,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.int,
     "Report every N events (default is N=10)"
@@ -24,13 +24,13 @@ options.setDefault('maxEvents', 100)
 
 options.parseArguments()
 
-process = cms.Process("Validation")
+process = cms.Process("Validationreal")
 
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
+process.GlobalTag = GlobalTag(process.GlobalTag, '92X_upgrade2017_realistic_v11')
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
@@ -46,8 +46,9 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         # /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        '/store/mc/RunIIFall15MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/023DCCDE-E3B8-E511-9985-002590DE6C56.root'
-    )
+        #'/store/mc/RunIIFall15MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/023DCCDE-E3B8-E511-9985-002590DE6C56.root'
+       'file:/afs/cern.ch/work/l/lata/test/CMSSW_9_2_8/src/CMSPOS/BTaggingExercise/MiniAODdrop_real.root' 
+   )
 )
 
 ## Options and Output Report
@@ -169,6 +170,28 @@ tags = cms.VPSet(
         label = cms.InputTag("pfCombinedSecondaryVertexV2BJetTags"),
         folder = cms.string("pfCSVv2")
         )
+#,
+############ DeepCSV
+ #       cms.PSet(
+  #          bTagGenericAnalysisBlock,
+   #         label = cms.InputTag("pfDeepCSVJetTags:probb"),
+    #        folder = cms.string("deepCSV_probb")
+     #   ),
+#	cms.PSet(
+ #           bTagGenericAnalysisBlock,
+  #          label = cms.InputTag("pfDeepCSVJetTags:probc"),
+   #         folder = cms.string("deepCSV_probc")
+    #    ),
+#	cms.PSet(
+ #           bTagGenericAnalysisBlock,
+  #          label = cms.InputTag("pfDeepCSVJetTags:probudsg"),
+   #         folder = cms.string("deepCSV_probudsg")
+    #    ),
+#	cms.PSet(
+ #           bTagGenericAnalysisBlock,
+  #          label = cms.InputTag("pfDeepCSVJetTags:probbb"),
+   #         folder = cms.string("deepCSV_probbb")
+    #    )
 )
 ## Tweak the validation configuration
 process.bTagValidation.jetMCSrc = 'ak4JetFlavourInfos'

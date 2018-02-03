@@ -30,11 +30,11 @@ options.register('wantSummary', False,
 )
 
 ## 'maxEvents' is already registered by the Framework, changing default value
-options.setDefault('maxEvents', 100)
+options.setDefault('maxEvents', 50000)
 
 options.parseArguments()
 
-process = cms.Process("USER")
+process = cms.Process("real")
 
 
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
@@ -53,8 +53,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         # /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0806AB92-99BE-E611-9ECD-0025905A6138.root'
-    )
+        #'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0806AB92-99BE-E611-9ECD-0025905A6138.root'
+        #  '/store/mc/RunIISummer17MiniAOD/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10_ext1-v1/110000/004132F1-7785-E711-A143-008CFAFC53C6.root'
+        'file:/afs/cern.ch/work/l/lata/public/941021E6-1FCF-E511-969E-FA163E8CF0DE.root'
+     )
+
 )
 
 if options.process == "QCD":
@@ -91,7 +94,11 @@ bTagDiscriminators = [
     'pfSimpleSecondaryVertexHighPurBJetTags',
     'pfCombinedSecondaryVertexV2BJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-    'pfCombinedMVAV2BJetTags'
+    'pfCombinedMVAV2BJetTags',
+    'pfDeepCSVJetTags:probb',
+    'pfDeepCSVJetTags:probbb'
+  #  'pfDeepCSVJetTags:probb+pfDeepCSVJetTags:probbb'
+
 ]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
@@ -116,7 +123,9 @@ process.bTaggingExerciseII = cms.EDAnalyzer('BTaggingExerciseII',
         'pfSimpleSecondaryVertexHighPurBJetTags',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-        'pfCombinedMVABJetTags'
+        'pfCombinedMVABJetTags',
+    'pfDeepCSVJetTags:probb',
+    'pfDeepCSVJetTags:probbb'
     )
 )
 
