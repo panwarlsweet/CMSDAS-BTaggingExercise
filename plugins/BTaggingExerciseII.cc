@@ -86,6 +86,11 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
 
 {
    std::string bDiscr_flav = "";
+    // for( const std::string &flav : {"b","c","udsg"} ){
+     // bDiscr_flav = "pfDeepCSV(b+bb)" + "_" + flav;
+       // bDiscriminatorsMap[pfDeepCSV(b+bb)_flav] = fs->make<TH2F>(pfDeepCSV(b+bb)_flav, (pfDeepCSV(b+bb)_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
+       
+  //} 
    // initialize b-tag discriminator histograms
    for( const std::string &bDiscr : bDiscriminators_ )
    {
@@ -132,7 +137,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     for( const std::string &bDiscr : bDiscriminators_ )
     {
       if( jet->pt()<30. || std::abs(jet->eta())>2.4 ) continue; // skip jets with low pT or outside the tracker acceptance
-
+     if(bDiscr != "pfDeepCSVJetTags"){
       if( flavor==5 ) // b jet
         bDiscr_flav = bDiscr + "_b";
       else if( flavor==4 ) // c jets
@@ -141,6 +146,17 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
         bDiscr_flav = bDiscr + "_udsg";
 
       bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
+      }
+    if(bDiscr == "pfDeepCSVJetTags"){ 
+     if( flavor==5 ) // b jet
+        bDiscr_flav = bDiscr + "_b";
+      else if( flavor==4 ) // c jets
+        bDiscr_flav = bDiscr + "_c";
+      else // light-flavor jet
+        bDiscr_flav = bDiscr + "_udsg";
+
+      bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") ); 
+     }
     }
   }
 }
