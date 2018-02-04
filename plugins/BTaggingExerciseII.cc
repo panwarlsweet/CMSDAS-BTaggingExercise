@@ -88,7 +88,7 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
    std::string bDiscr_flav = "";
     // for( const std::string &flav : {"b","c","udsg"} ){
      // bDiscr_flav = "pfDeepCSV(b+bb)" + "_" + flav;
-       // bDiscriminatorsMap[pfDeepCSV(b+bb)_flav] = fs->make<TH2F>(pfDeepCSV(b+bb)_flav, (pfDeepCSV(b+bb)_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
+       // bDiscriminatorsMap[pfDeepCSV(b+bb)_flav] = fs->make<TH2F>(pfDeepCSV(b+bb)_flav, (pfDeepCSV(b+bb)_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 10, 0,1000, 4400, -11, 11);
        
   //} 
    // initialize b-tag discriminator histograms
@@ -98,9 +98,9 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
      {
        bDiscr_flav = bDiscr + "_" + flav;
        if( bDiscr.find("Counting") != std::string::npos ) // track counting discriminator can be both positive and negative and covers a wider range then other discriminators
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 11000, -15, 40);
+         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 10, 0, 1000, 11000, -15, 40);
        else
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
+         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 10, 0, 1000, 4400, -11, 11);
      }
    }
 }
@@ -130,13 +130,16 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
   std::string bDiscr_flav = "";
   // loop over jets
-  for( auto jet = jets->begin(); jet != jets->end(); ++jet )
-  {
-    int flavor = std::abs( jet->hadronFlavour() );
+//  for( auto jetak8 = jets->begin(); jetak8 != jets->end(); ++jetak8 )
+   for (const pat::Jet & jetak8 : *jets) { 
+ 
+    std::vector<edm::Ptr<pat::Jet> > const& sdsubjets = jetak8.subjets("SoftDrop") ;
+      if (sdsubjets.size() < 2) continue ;
+    int flavor = std::abs( sdsubjets.at(0)->hadronFlavour() );
     // fill discriminator histograms
     for( const std::string &bDiscr : bDiscriminators_ )
     {
-      if( jet->pt()<30. || std::abs(jet->eta())>2.4 ) continue; // skip jets with low pT or outside the tracker acceptance
+      if( sdsubjets.at(0)->pt()<20. || std::abs(sdsubjets.at(0)->eta())>3.5 ) continue; // skip jets with low pT or outside the tracker acceptance
      if(bDiscr != "pfDeepCSVJetTags"){
       if( flavor==5 ) // b jet
         bDiscr_flav = bDiscr + "_b";
@@ -145,7 +148,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       else // light-flavor jet
         bDiscr_flav = bDiscr + "_udsg";
 
-      bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
+      bDiscriminatorsMap[bDiscr_flav]->Fill( sdsubjets.at(0)->pt(), sdsubjets.at(0)->bDiscriminator(bDiscr) );
       }
     if(bDiscr == "pfDeepCSVJetTags"){ 
      if( flavor==5 ) // b jet
@@ -155,7 +158,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       else // light-flavor jet
         bDiscr_flav = bDiscr + "_udsg";
 
-      bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") ); 
+      bDiscriminatorsMap[bDiscr_flav]->Fill( sdsubjets.at(0)->pt(), sdsubjets.at(0)->bDiscriminator("pfDeepCSVJetTags:probb") + sdsubjets.at(0)->bDiscriminator("pfDeepCSVJetTags:probbb") ); 
      }
     }
   }
