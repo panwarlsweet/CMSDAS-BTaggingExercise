@@ -63,38 +63,30 @@ def makeEffVsMistagTGraph(histo_b,histo_nonb,allowNegative):
 def main():
 
     # input file
-    inputFile = TFile.Open('exerciseII_histos_ttbar.root')
+    inputFile = TFile.Open('exerciseII_histos_run2.root')
+    fout = TFile('ROC_run2_1.root', 'recreate')
 
     # b-taggers
     bTaggers = [
-        #'pfTrackCountingHighEffBJetTags',
-        #'pfTrackCountingHighPurBJetTags',
-        #'pfSimpleSecondaryVertexHighEffBJetTags',
-        #'pfSimpleSecondaryVertexHighPurBJetTags',
-        #'pfJetProbabilityBJetTags',
-        #'pfJetBProbabilityBJetTags',
-        #'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-        'pfDeepCSVJetTags:probb',
-        'pfDeepCSVJetTags:probbb'
-       # 'pfDeepCSVJetTags:probb'+'pfDeepCSVJetTags:probbb'
+        'pfDeepCSVJetTags'
     ]
-    color = [kOrange, kRed, kCyan, kGreen, kMagenta, kBlue, kBlack, kYellow+2, kPink]
-    #legend = ['pfTCHE', 'pfTCHP', 'pfSSVHE', 'pfSSVHP', 'pfJP', 'pfJBP', 'pfCSVv2IVF','pfDCSV:b','pfDCSV:bb']
-    legend = ['DeepCSV:b','DeepCSV:bb']
+    color = [kRed, kOrange, kCyan, kGreen, kMagenta, kBlue, kBlack]
+    legend = ['Run2_BG3000_AK4(p_{T} > 30 GeV)']
+
     # non-b flavors
     nonbs = ['c','udsg']
-
+    i=2
     # loop over non-b flavors
     for nonb in nonbs:
         # create canvas
-        c = TCanvas("c", "",800,800)
+        c = TCanvas("c"+nonb, "",800,800)
         c.cd()
         c.SetGridx()
         c.SetGridy()
         c.SetLogy()
 
         # empty 2D background historgram to simplify defining axis ranges to display
-        bkg = TH2F('bkg',';b jet tagging efficiency;' + nonb + ' jet mistag rate',100,0.,1.,100,((1e-3 if nonb=='c' else 1e-4)),1.)
+        bkg = TH2F('bkg',';b jet tagging efficiency;' + ' mistag rate',100,0.,1.,100,((1e-3 if nonb=='c' else 1e-3)),1.)
         bkg.GetYaxis().SetTitleOffset(1.2)
         bkg.Draw()
 
@@ -107,7 +99,7 @@ def main():
         leg.SetTextSize(0.03)
 
         # dictionary to store eff vs mistag rate graphs
-        g = {}
+        g_nonb = {}
 
         # loop over b-taggers
         for t, bTagger in enumerate(bTaggers):
@@ -122,21 +114,27 @@ def main():
             allowNegative = False
             if( 'Counting' in bTagger ): allowNegative = True
             # get eff vs mistag rate graph
-            g[t] = makeEffVsMistagTGraph(discr_b,discr_nonb,allowNegative)
-            g[t].SetLineWidth(2)
-            g[t].SetLineColor(color[t])
-            g[t].Draw('l')
-            leg.AddEntry(g[t],legend[t],"l")
-
+            g_nonb[t] = makeEffVsMistagTGraph(discr_b,discr_nonb,allowNegative)
+            g_nonb[t].SetLineWidth(3)
+            g_nonb[t].SetLineColor(color[t])
+            g_nonb[t].SetLineStyle(i)
+            g_nonb[t].Draw('l')
+            leg.AddEntry(g_nonb[t],legend[t],"l")
+            
+        
+            fout.cd()
+            g_nonb[t].Write()
+        
+        i=i-2
         leg.Draw()
-
         gPad.RedrawAxis()
 
         # save the plot
         c.SaveAs('bTagEffVsMistagRate_' + nonb + '.png')
-
+        c.Write()
         c.Close()
         bkg.Delete()
+    fout.Close()
 
     # close the input file
     inputFile.Close()
