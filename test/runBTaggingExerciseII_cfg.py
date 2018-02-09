@@ -18,7 +18,7 @@ options.register('outputFilename', 'exerciseII_histos.root',
     VarParsing.varType.string,
     "Output file name"
 )
-options.register('process', 'ttbar',
+options.register('process', 'QCD_phase2',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "MC-simulated event type"
@@ -34,15 +34,16 @@ options.setDefault('maxEvents', 50000)
 
 options.parseArguments()
 
-process = cms.Process("real")
+process = cms.Process("USER")
 
 
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
-process.load("Configuration.Geometry.GeometryRecoDB_cff")
+process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
+process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
-
+process.GlobalTag = GlobalTag(process.GlobalTag, '93X_upgrade2023_realistic_v2')
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
 
@@ -52,13 +53,24 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 ## Input files
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        # /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        #'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0806AB92-99BE-E611-9ECD-0025905A6138.root'
-        #  '/store/mc/RunIISummer17MiniAOD/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10_ext1-v1/110000/004132F1-7785-E711-A143-008CFAFC53C6.root'
-        #'file:/afs/cern.ch/work/l/lata/public/941021E6-1FCF-E511-969E-FA163E8CF0DE.root'
-        '/store/mc/RunIIFall15MiniAODv2/BulkGravTohhTohbbhbb_narrow_M-3000_13TeV-madgraph/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/10000/52AAADC4-16CF-E511-8808-842B2B765E01.root','/store/mc/RunIIFall15MiniAODv2/BulkGravTohhTohbbhbb_narrow_M-3000_13TeV-madgraph/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/10000/96020602-17CF-E511-BFDE-C45444922988.root'  
-   )
-
+  '/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/0409BE50-26AC-E711-990B-0CC47A6C063E.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/065D172D-D7AB-E711-A5CB-1866DAEB1FCC.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/0A2D6042-27AC-E711-B340-001E6779245C.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/0EAE4109-27AC-E711-9290-E0071B7A4550.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/1C20C80D-26AC-E711-B87C-0CC47A0AD74E.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/261C4EEC-99AA-E711-9751-001E67A3EF48.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/2A0157D6-25AC-E711-8F32-2C768AAF879E.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/2A39D0E8-67AB-E711-81A5-001E675A6A63.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/40091B08-26AC-E711-8E94-A4BF01013F8D.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/56AA38E3-25AC-E711-9AC7-B083FED3EE24.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/6C20C8D6-25AC-E711-836F-549F358EB7D7.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/C28C711F-04AB-E711-91B9-A4BADB1CFD4E.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/00000/C4A32C90-27AC-E711-8EC4-008CFAFC0122.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/0C4A4293-5AB3-E711-8844-008CFAF28DCE.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/18370D18-A3AE-E711-8161-0CC47A78A3EE.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/1840A8C8-F9B2-E711-B722-008CFAF7350E.root',
+'/store/mc/PhaseIITDRFall17MiniAOD/QCD_Mdijet-1000toInf_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/noPU_93X_upgrade2023_realistic_v2-v1/150000/1E3964D9-33B2-E711-ABC6-5065F38152E1.root'
+    )
 )
 
 if options.process == "QCD":
@@ -96,25 +108,40 @@ bTagDiscriminators = [
     'pfCombinedSecondaryVertexV2BJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
     'pfCombinedMVAV2BJetTags',
-    'pfDeepCSVJetTags:probb',
-    'pfDeepCSVJetTags:probbb'
-  #  'pfDeepCSVJetTags:probb+pfDeepCSVJetTags:probbb'
-
+    'pfDeepCSVJetTags:probudsg',        
+    'pfDeepCSVJetTags:probb',           
+    'pfDeepCSVJetTags:probc',           
+    'pfDeepCSVJetTags:probbb',          
 ]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 ## Update the slimmedJets in miniAOD: corrections from the chosen Global Tag are applied and the b-tag discriminators are re-evaluated
-updateJetCollection(
+"""updateJetCollection(
     process,
     jetSource = cms.InputTag('slimmedJets'),
     jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
     btagDiscriminators = bTagDiscriminators
 )
 
+updateJetCollection(
+    process,
+    labelName='FatPF',
+    jetSource=cms.InputTag('slimmedJetsAK8'),
+    jetCorrections = ('AK8PFPuppi', ['L2Relative', 'L3Absolute'], 'None'), 
+    btagDiscriminators = bTagDiscriminators,
+)
+
+updateJetCollection(
+    process,
+    labelName='SoftDropSubjetsPF',
+    jetSource=cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'),
+    jetCorrections = ('AK4PFPuppi', ['L2Relative', 'L3Absolute'], 'None'),
+    btagDiscriminators = bTagDiscriminators,
+)"""
 
 ## Initialize analyzer
-process.bTaggingExerciseII = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
+process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
+    jets = cms.InputTag('slimmedJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -124,10 +151,63 @@ process.bTaggingExerciseII = cms.EDAnalyzer('BTaggingExerciseII',
         'pfSimpleSecondaryVertexHighPurBJetTags',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-        'pfCombinedMVABJetTags',
-        'pfDeepCSVJetTags'
+        'pfCombinedMVAV2BJetTags',
+        'pfDeepCSVJetTags:probudsg',        
+        'pfDeepCSVJetTags:probb',           
+        'pfDeepCSVJetTags:probc',           
+        'pfDeepCSVJetTags:probbb',          
     )
 )
 
+process.bTaggingExerciseIIAK8Jets = cms.EDAnalyzer('BTaggingExerciseII',
+    jets = cms.InputTag('slimmedJetsAK8'), # input jet collection name
+    bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
+        'pfTrackCountingHighEffBJetTags',
+        'pfTrackCountingHighPurBJetTags',
+        'pfJetProbabilityBJetTags',
+        'pfJetBProbabilityBJetTags',
+        'pfSimpleSecondaryVertexHighEffBJetTags',
+        'pfSimpleSecondaryVertexHighPurBJetTags',
+        'pfCombinedSecondaryVertexV2BJetTags',
+        'pfCombinedInclusiveSecondaryVertexV2BJetTags',
+        'pfCombinedMVAV2BJetTags',
+        'pfDeepCSVJetTags:probudsg',        
+        'pfDeepCSVJetTags:probb',           
+        'pfDeepCSVJetTags:probc',           
+        'pfDeepCSVJetTags:probbb',          
+    )
+)
+
+process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
+    jets = cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'), # input jet collection name
+    bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
+        'pfTrackCountingHighEffBJetTags',
+        'pfTrackCountingHighPurBJetTags',
+        'pfJetProbabilityBJetTags',
+        'pfJetBProbabilityBJetTags',
+        'pfSimpleSecondaryVertexHighEffBJetTags',
+        'pfSimpleSecondaryVertexHighPurBJetTags',
+        'pfCombinedSecondaryVertexV2BJetTags',
+        'pfCombinedInclusiveSecondaryVertexV2BJetTags',
+        'pfCombinedMVAV2BJetTags',
+        'pfDeepCSVJetTags:probudsg',        
+        'pfDeepCSVJetTags:probb',           
+        'pfDeepCSVJetTags:probc',           
+        'pfDeepCSVJetTags:probbb',          
+    )
+)
+
+process.task = cms.Task()
+for mod in process.producers_().itervalues():
+    process.task.add(mod)
+for mod in process.filters_().itervalues():
+    process.task.add(mod)
+
 ## Let it run
-process.p = cms.Path(process.bTaggingExerciseII)
+process.p = cms.Path(
+    process.bTaggingExerciseIIAK4Jets
+    * process.bTaggingExerciseIIAK8Jets
+    * process.bTaggingExerciseIISubJets
+    ,process.task ) 
+
+open('dump.py', 'w').write(process.dumpPython())
