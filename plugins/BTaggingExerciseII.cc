@@ -98,9 +98,9 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
      {
        bDiscr_flav = bDiscr + "_" + flav;
        if( bDiscr.find("Counting") != std::string::npos ) // track counting discriminator can be both positive and negative and covers a wider range then other discriminators
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 11000, -15, 40);
+         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 10, 0, 1000, 11000, -15, 40);
        else
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
+         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 10, 0, 1000, 4400, -11, 11);
      }
    }
 }
@@ -136,7 +136,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // fill discriminator histograms
     for( const std::string &bDiscr : bDiscriminators_ )
     {
-      if( jet->pt()<30. || std::abs(jet->eta())>2.4 ) continue; // skip jets with low pT or outside the tracker acceptance
+    if( jet->pt()<20. || std::abs(jet->eta())>2.4 ) continue; // skip jets with low pT or outside the tracker acceptance
      if(bDiscr != "pfDeepCSVJetTags"){
       if( flavor==5 ) // b jet
         bDiscr_flav = bDiscr + "_b";
