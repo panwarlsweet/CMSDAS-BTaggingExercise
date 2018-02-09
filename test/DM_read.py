@@ -18,7 +18,7 @@ options.register('outputFilename', 'exerciseII_histos.root',
     VarParsing.varType.string,
     "Output file name"
 )
-options.register('process', 'QCD_94',
+options.register('process', 'CSV_QCD_94',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "MC-simulated event type"
@@ -52,7 +52,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 ## Input files
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-    '/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/0031BC57-D8AD-E711-B912-008CFAF28DB2.root',
+'/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/0031BC57-D8AD-E711-B912-008CFAF28DB2.root',
 '/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/00FA6112-EBAD-E711-9521-FA163EDC1093.root',
 '/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/00FD84D6-83AD-E711-A41B-008CFAFC03F8.root'
     )
@@ -61,7 +61,7 @@ process.source = cms.Source("PoolSource",
 if options.process == "QCD":
     process.source.fileNames = [
         # /QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_magnetOn_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUFlat0to70_80X_mcRun2_asymptotic_2016_TrancheIV_v4-v1/50000/00BC8956-278B-E611-99AD-0CC47A4D763C.root'
+        #'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUFlat0to70_80X_mcRun2_asymptotic_2016_TrancheIV_v4-v1/50000/00BC8956-278B-E611-99AD-0CC47A4D763C.root'
     ]
 
 ## Output file
@@ -100,33 +100,11 @@ bTagDiscriminators = [
 ]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
-## Update the slimmedJets in miniAOD: corrections from the chosen Global Tag are applied and the b-tag discriminators are re-evaluated
-updateJetCollection(
-    process,
-    jetSource = cms.InputTag('slimmedJets'),
-    jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-    btagDiscriminators = bTagDiscriminators
-)
 
-updateJetCollection(
-    process,
-    labelName='FatPF',
-    jetSource=cms.InputTag('slimmedJetsAK8'),
-    jetCorrections = ('AK8PFPuppi', ['L2Relative', 'L3Absolute'], 'None'), 
-    btagDiscriminators = bTagDiscriminators,
-)
-
-updateJetCollection(
-    process,
-    labelName='SoftDropSubjetsPF',
-    jetSource=cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'),
-    jetCorrections = ('AK4PFPuppi', ['L2Relative', 'L3Absolute'], 'None'),
-    btagDiscriminators = bTagDiscriminators,
-)
 
 ## Initialize analyzer
 process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
+    jets = cms.InputTag('slimmedJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -137,15 +115,16 @@ process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
         'pfCombinedMVAV2BJetTags',
-        'pfDeepCSVJetTags:probudsg',        
-        'pfDeepCSVJetTags:probb',           
-        'pfDeepCSVJetTags:probc',           
-        'pfDeepCSVJetTags:probbb',          
+        'pfDeepCSVJetTags'
+        #'pfDeepCSVJetTags:probudsg',        
+        #'pfDeepCSVJetTags:probb',           
+        #'pfDeepCSVJetTags:probc',           
+        #'pfDeepCSVJetTags:probbb',          
     )
 )
 
 process.bTaggingExerciseIIAK8Jets = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJetsFatPF'), # input jet collection name
+    jets = cms.InputTag('slimmedJetsAK8'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -156,15 +135,16 @@ process.bTaggingExerciseIIAK8Jets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
         'pfCombinedMVAV2BJetTags',
-        'pfDeepCSVJetTags:probudsg',        
-        'pfDeepCSVJetTags:probb',           
-        'pfDeepCSVJetTags:probc',           
-        'pfDeepCSVJetTags:probbb',          
+        'pfDeepCSVJetTags'
+        #'pfDeepCSVJetTags:probudsg',        
+        #'pfDeepCSVJetTags:probb',           
+        #'pfDeepCSVJetTags:probc',           
+        #'pfDeepCSVJetTags:probbb',          
     )
 )
 
 process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJetsSoftDropSubjetsPF'), # input jet collection name
+    jets = cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked','SubJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -175,24 +155,16 @@ process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
         'pfCombinedMVAV2BJetTags',
-        'pfDeepCSVJetTags:probudsg',        
-        'pfDeepCSVJetTags:probb',           
-        'pfDeepCSVJetTags:probc',           
-        'pfDeepCSVJetTags:probbb',          
+        'pfDeepCSVJetTags'
     )
 )
 
-process.task = cms.Task()
-for mod in process.producers_().itervalues():
-    process.task.add(mod)
-for mod in process.filters_().itervalues():
-    process.task.add(mod)
 
 ## Let it run
 process.p = cms.Path(
     process.bTaggingExerciseIIAK4Jets
     * process.bTaggingExerciseIIAK8Jets
-    * process.bTaggingExerciseIISubJets
-    ,process.task ) 
+    * process.bTaggingExerciseIISubJets)
+#    ,process.task ) 
 
 open('dump.py', 'w').write(process.dumpPython())

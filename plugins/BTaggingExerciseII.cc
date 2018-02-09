@@ -36,6 +36,8 @@
 
 #include "TH2F.h"
 
+#include <boost/algorithm/string.hpp>
+
 //
 // class declaration
 //
@@ -86,11 +88,6 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
 
 {
    std::string bDiscr_flav = "";
-    // for( const std::string &flav : {"b","c","udsg"} ){
-     // bDiscr_flav = "pfDeepCSV(b+bb)" + "_" + flav;
-       // bDiscriminatorsMap[pfDeepCSV(b+bb)_flav] = fs->make<TH2F>(pfDeepCSV(b+bb)_flav, (pfDeepCSV(b+bb)_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
-       
-  //} 
    // initialize b-tag discriminator histograms
    for( const std::string &bDiscr : bDiscriminators_ )
    {
@@ -99,8 +96,13 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
        bDiscr_flav = bDiscr + "_" + flav;
        if( bDiscr.find("Counting") != std::string::npos ) // track counting discriminator can be both positive and negative and covers a wider range then other discriminators
          bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 11000, -15, 40);
-       else
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 20, 0, 200, 4400, -11, 11);
+       else if ( bDiscr.find("probbb") != std::string::npos || bDiscr.find("probb") != std::string::npos ) {
+         bDiscr_flav = std::string("pfDeepCSVJetTagsProbB") + "_" + flav;
+         if ( bDiscriminatorsMap.find(bDiscr_flav) == bDiscriminatorsMap.end() ) 
+           bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
+       }
+       else 
+         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
      }
    }
 }
@@ -108,9 +110,9 @@ BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
 
 BTaggingExerciseII::~BTaggingExerciseII()
 {
- 
-   // do anything here that needs to be done at desctruction time
-   // (e.g. close files, deallocate resources etc.)
+
+  // do anything here that needs to be done at desctruction time
+  // (e.g. close files, deallocate resources etc.)
 
 }
 
@@ -120,7 +122,7 @@ BTaggingExerciseII::~BTaggingExerciseII()
 //
 
 // ------------ method called for each event  ------------
-void
+  void
 BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   // define a jet handle
@@ -136,8 +138,8 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
     // fill discriminator histograms
     for( const std::string &bDiscr : bDiscriminators_ )
     {
-      if( jet->pt()<30. || std::abs(jet->eta())>2.4 ) continue; // skip jets with low pT or outside the tracker acceptance
-     if(bDiscr != "pfDeepCSVJetTags"){
+      if( jet->pt()<20. || std::abs(jet->eta())>2.5 ) continue; // skip jets with low pT or outside the tracker acceptance
+
       if( flavor==5 ) // b jet
         bDiscr_flav = bDiscr + "_b";
       else if( flavor==4 ) // c jets
@@ -145,66 +147,61 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       else // light-flavor jet
         bDiscr_flav = bDiscr + "_udsg";
 
-      bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
+      if ( bDiscr.find("probbb") != std::string::npos ) continue; //// We will sum the DeepCSV::probbb and DeepCSV::probb together
+      if ( bDiscr.find("probb") != std::string::npos ) {
+        boost::replace_all(bDiscr_flav, bDiscr, "pfDeepCSVJetTagsProbB") ; 
+        bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") );
       }
-    if(bDiscr == "pfDeepCSVJetTags"){ 
-     if( flavor==5 ) // b jet
-        bDiscr_flav = bDiscr + "_b";
-      else if( flavor==4 ) // c jets
-        bDiscr_flav = bDiscr + "_c";
-      else // light-flavor jet
-        bDiscr_flav = bDiscr + "_udsg";
+      else bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
 
-      bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") ); 
-     }
     }
   }
 }
 
 
 // ------------ method called once each job just before starting event loop  ------------
-void 
+  void 
 BTaggingExerciseII::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void 
+  void 
 BTaggingExerciseII::endJob() 
 {
 }
 
 // ------------ method called when starting to processes a run  ------------
 /*
-void 
-BTaggingExerciseII::beginRun(edm::Run const&, edm::EventSetup const&)
-{
-}
-*/
+   void 
+   BTaggingExerciseII::beginRun(edm::Run const&, edm::EventSetup const&)
+   {
+   }
+   */
 
 // ------------ method called when ending the processing of a run  ------------
 /*
-void 
-BTaggingExerciseII::endRun(edm::Run const&, edm::EventSetup const&)
-{
-}
-*/
+   void 
+   BTaggingExerciseII::endRun(edm::Run const&, edm::EventSetup const&)
+   {
+   }
+   */
 
 // ------------ method called when starting to processes a luminosity block  ------------
 /*
-void 
-BTaggingExerciseII::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-{
-}
-*/
+   void 
+   BTaggingExerciseII::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+   {
+   }
+   */
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 /*
-void 
-BTaggingExerciseII::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-{
-}
-*/
+   void 
+   BTaggingExerciseII::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+   {
+   }
+   */
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
