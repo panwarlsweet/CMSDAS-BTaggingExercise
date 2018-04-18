@@ -18,7 +18,7 @@ options.register('outputFilename', 'exerciseII_histos.root',
     VarParsing.varType.string,
     "Output file name"
 )
-options.register('process', 'QCD_94',
+options.register('process', 'BG2000',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "MC-simulated event type"
@@ -52,9 +52,17 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 ## Input files
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-    '/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/0031BC57-D8AD-E711-B912-008CFAF28DB2.root',
-'/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/00FA6112-EBAD-E711-9521-FA163EDC1093.root',
-'/store/mc/RunIISummer17MiniAOD/QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/30000/00FD84D6-83AD-E711-A41B-008CFAFC03F8.root'
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/30128937-4D99-E711-8420-0CC47AB0B826.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/301A108C-549A-E711-86A5-60EB69BACBC6.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/349299C5-069A-E711-B772-0090FAA573E0.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/3E57125C-1F99-E711-9519-44A842CFC9BF.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/46F8D1F9-F499-E711-BDC3-0CC47A4D75F6.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/5AB9168D-ED99-E711-B81A-44A842CFC9F3.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/5C9E22A9-CA99-E711-B00F-001E67E6F616.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/6267F4DC-C399-E711-B5B8-002590DE6C9A.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/669C37B2-4A99-E711-A3A3-008CFAC93FD0.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/7E67357F-1599-E711-BC9F-68B5996BD98E.root',
+'/store/mc/RunIISummer17MiniAOD/BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/90000/84448261-169A-E711-9D78-0CC47ABB518A.root'
     )
 )
 
@@ -101,12 +109,12 @@ bTagDiscriminators = [
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 ## Update the slimmedJets in miniAOD: corrections from the chosen Global Tag are applied and the b-tag discriminators are re-evaluated
-updateJetCollection(
+"""updateJetCollection(
     process,
     jetSource = cms.InputTag('slimmedJets'),
     jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
     btagDiscriminators = bTagDiscriminators
-)
+)"""
 
 updateJetCollection(
     process,
@@ -116,16 +124,16 @@ updateJetCollection(
     btagDiscriminators = bTagDiscriminators,
 )
 
-updateJetCollection(
+"""updateJetCollection(
     process,
     labelName='SoftDropSubjetsPF',
     jetSource=cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'),
     jetCorrections = ('AK4PFPuppi', ['L2Relative', 'L3Absolute'], 'None'),
     btagDiscriminators = bTagDiscriminators,
-)
+)"""
 
 ## Initialize analyzer
-process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
+"""process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
     jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
@@ -142,10 +150,10 @@ process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfDeepCSVJetTags:probc',           
         'pfDeepCSVJetTags:probbb',          
     )
-)
+)"""
 
 process.bTaggingExerciseIIAK8Jets = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJetsFatPF'), # input jet collection name
+    jetsak8 = cms.InputTag('selectedUpdatedPatJetsFatPF'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -163,7 +171,7 @@ process.bTaggingExerciseIIAK8Jets = cms.EDAnalyzer('BTaggingExerciseII',
     )
 )
 
-process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
+"""process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
     jets = cms.InputTag('selectedUpdatedPatJetsSoftDropSubjetsPF'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
@@ -180,7 +188,7 @@ process.bTaggingExerciseIISubJets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfDeepCSVJetTags:probc',           
         'pfDeepCSVJetTags:probbb',          
     )
-)
+)"""
 
 process.task = cms.Task()
 for mod in process.producers_().itervalues():
@@ -190,9 +198,7 @@ for mod in process.filters_().itervalues():
 
 ## Let it run
 process.p = cms.Path(
-    process.bTaggingExerciseIIAK4Jets
-    * process.bTaggingExerciseIIAK8Jets
-    * process.bTaggingExerciseIISubJets
+     process.bTaggingExerciseIIAK8Jets
     ,process.task ) 
 
 open('dump.py', 'w').write(process.dumpPython())
