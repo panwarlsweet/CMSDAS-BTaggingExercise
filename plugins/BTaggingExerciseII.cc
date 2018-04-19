@@ -157,7 +157,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 for( auto jetak8 = h_jetsak8->begin(); jetak8 != h_jetsak8->end(); ++jetak8 ){
   if(jetak8->mass() < 80 && jetak8->mass() > 160) continue;
   if(jetak8->pt() < 750  && jetak8->pt() > 1150) continue; 
-  if(jetak8->eta() > 1.5 ) continue; 
+  if(std::abs(jetak8->eta()) > 1.5 ) continue; 
   std::vector<edm::Ptr<pat::Jet> > const& jets = jetak8->subjets("SoftDropPuppi") ;
   // loop over jets
   int n = jets.size();
@@ -185,7 +185,7 @@ for( auto jetak8 = h_jetsak8->begin(); jetak8 != h_jetsak8->end(); ++jetak8 ){
 
     }
   }
-  //  if (n<2) continue;
+    if (n<2) continue;
       int flavor0 = std::abs( jets.at(0)->hadronFlavour() );
       int flavor1 = std::abs( jets.at(1)->hadronFlavour() );
       double bdisc_0 = jets.at(0)->bDiscriminator("pfDeepCSVJetTags:probb") + jets.at(0)->bDiscriminator("pfDeepCSVJetTags:probbb");
