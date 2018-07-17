@@ -5,10 +5,10 @@
 // 
 /**\class BTaggingExerciseII BTaggingExerciseII.cc CMSDAS2015/BTaggingExercise/plugins/BTaggingExerciseII.cc
 
- Description: [one line class summary]
+   Description: [one line class summary]
 
- Implementation:
-     [Notes on implementation]
+   Implementation:
+   [Notes on implementation]
 */
 //
 // Original Author:  Dinko Ferencek
@@ -43,32 +43,32 @@
 //
 
 class BTaggingExerciseII : public edm::EDAnalyzer {
-   public:
-      explicit BTaggingExerciseII(const edm::ParameterSet&);
-      ~BTaggingExerciseII();
+public:
+  explicit BTaggingExerciseII(const edm::ParameterSet&);
+  ~BTaggingExerciseII();
 
-      static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
 
-   private:
-      virtual void beginJob() override;
-      virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
-      virtual void endJob() override;
+private:
+  virtual void beginJob() override;
+  virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
+  virtual void endJob() override;
 
-      //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-      //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
-      //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-      //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
+  //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
+  //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
+  //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
+  //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
-      // ----------member data ---------------------------
-      const edm::EDGetTokenT<std::vector<pat::Jet> > jets_;
-//      const edm::EDGetTokenT<std::vector<pat::Jet> > jetsak8_;
-      const std::vector<std::string> bDiscriminators_;
+  // ----------member data ---------------------------
+  const edm::EDGetTokenT<std::vector<pat::Jet> > jets_;
+  //      const edm::EDGetTokenT<std::vector<pat::Jet> > jetsak8_;
+  const std::vector<std::string> bDiscriminators_;
 
-      edm::Service<TFileService> fs;
+  edm::Service<TFileService> fs;
 
-      // declare a map of b-tag discriminator histograms
-      std::map<std::string, TH2F *> bDiscriminatorsMap;
+  // declare a map of b-tag discriminator histograms
+  std::map<std::string, TH2F *> bDiscriminatorsMap;
 };
 
 //
@@ -85,35 +85,35 @@ class BTaggingExerciseII : public edm::EDAnalyzer {
 BTaggingExerciseII::BTaggingExerciseII(const edm::ParameterSet& iConfig) :
 
   jets_(consumes<std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("jets"))),
-//  jetsak8_(consumes<std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("jetsak8"))),
+  //  jetsak8_(consumes<std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("jetsak8"))),
   bDiscriminators_(iConfig.getParameter<std::vector<std::string> >("bDiscriminators"))
 
 
 {
-   std::string bDiscr_flav = "";
-   // initialize b-tag discriminator histograms
-   for( const std::string &bDiscr : bDiscriminators_ )
-   {
-     for( const std::string &flav : {"b","c","udsg"} )
-     {
-       bDiscr_flav = bDiscr + "_" + flav;
-       if( bDiscr.find("Counting") != std::string::npos ) // track counting discriminator can be both positive and negative and covers a wider range then other discriminators
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 11000, -15, 40);
-       else if ( bDiscr.find("pfDeepCSVJetTags:probbb") != std::string::npos || bDiscr.find("pfDeepCSVJetTags:probb") != std::string::npos ) {
-         bDiscr_flav = std::string("pfDeepCSVJetTagsProbB") + "_" + flav;
-         if ( bDiscriminatorsMap.find(bDiscr_flav) == bDiscriminatorsMap.end() ) 
-           bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
-       }
-       else if ( bDiscr.find("pfDeepFlavourJetTags:probbb") != std::string::npos || bDiscr.find("pfDeepFlavourJetTags:probb") != std::string::npos ) {
-         bDiscr_flav = std::string("pfDeepFlavourJetTagsProbB") + "_" + flav;
-         if ( bDiscriminatorsMap.find(bDiscr_flav) == bDiscriminatorsMap.end() )
-           bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
-       }
-       else 
-         bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
+  std::string bDiscr_flav = "";
+  // initialize b-tag discriminator histograms
+  for( const std::string &bDiscr : bDiscriminators_ )
+    {
+      for( const std::string &flav : {"b","c","udsg"} )
+	{
+	  bDiscr_flav = bDiscr + "_" + flav;
+	  if( bDiscr.find("Counting") != std::string::npos ) // track counting discriminator can be both positive and negative and covers a wider range then other discriminators
+	    bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 11000, -15, 40);
+	  else if ( bDiscr.find("pfDeepCSVJetTags:probbb") != std::string::npos || bDiscr.find("pfDeepCSVJetTags:probb") != std::string::npos ) {
+	    bDiscr_flav = std::string("pfDeepCSVJetTagsProbB") + "_" + flav;
+	    if ( bDiscriminatorsMap.find(bDiscr_flav) == bDiscriminatorsMap.end() ) 
+	      bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
+	  }
+	  else if ( bDiscr.find("pfDeepFlavourJetTags:probbb") != std::string::npos || bDiscr.find("pfDeepFlavourJetTags:probb") != std::string::npos ) {
+	    bDiscr_flav = std::string("pfDeepFlavourJetTagsProbB") + "_" + flav;
+	    if ( bDiscriminatorsMap.find(bDiscr_flav) == bDiscriminatorsMap.end() )
+	      bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
+	  }
+	  else 
+	    bDiscriminatorsMap[bDiscr_flav] = fs->make<TH2F>(bDiscr_flav.c_str(), (bDiscr_flav + ";Jet p_{T} [GeV];b-tag discriminator").c_str(), 100, 0, 1000, 4400, -11, 11);
    
-     }
-   }
+	}
+    }
 }
 
 
@@ -132,10 +132,10 @@ BTaggingExerciseII::~BTaggingExerciseII()
 //
 
 // ------------ method called for each event  ------------
-  void
+void
 BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-// define a jet handle
+  // define a jet handle
   edm::Handle<std::vector<pat::Jet> > jets;
   // get jets from the event
   iEvent.getByToken(jets_, jets);
@@ -143,79 +143,80 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   std::string bDiscr_flav = "";
   // loop over jets
   for( auto jet = jets->begin(); jet != jets->end(); ++jet )
-  {
-    int flavor = std::abs( jet->hadronFlavour() );
-    // fill discriminator histograms
-    for( const std::string &bDiscr : bDiscriminators_ )
     {
-      if( jet->pt()<=30.) continue; // skip jets with low pT or outside the tracker acceptance
-     // if (jet->eta() < -2.5 && jet->eta() > -1.5 && jet->phi() > -0.6 && jet->phi() < -1.8) continue;
-      if (jet->eta() > 2.5 && jet->eta() < 1.5) continue;
-      if( flavor==5 ) // b jet
-        bDiscr_flav = bDiscr + "_b";
-      else if( flavor==4 ) // c jets
-        bDiscr_flav = bDiscr + "_c";
-      else // light-flavor jet
-        bDiscr_flav = bDiscr + "_udsg";
+      int flavor = std::abs( jet->hadronFlavour() );
+      // fill discriminator histograms
+      for( const std::string &bDiscr : bDiscriminators_ )
+	{
+	  if( jet->pt()<=30. || abs(jet->eta())>2.5 || jet->phi()<-1.8 || jet->phi()>-0.6) continue; // skip jets with low pT or outside the tracker acceptance
+	   if (jet->eta() >= -2.5 && jet->eta() <= -1.5){
+	  //if (jet->eta() <= 2.5 && jet->eta() >= 1.5){
+	  if( flavor==5 ) // b jet
+	    bDiscr_flav = bDiscr + "_b";
+	  else if( flavor==4 ) // c jets
+	    bDiscr_flav = bDiscr + "_c";
+	  else // light-flavor jet
+	    bDiscr_flav = bDiscr + "_udsg";
 
-      if ( bDiscr.find("pfDeepCSVJetTags:probbb") != std::string::npos ) continue; //// We will sum the DeepCSV::probbb and DeepCSV::probb together
-      if ( bDiscr.find("pfDeepCSVJetTags:probb") != std::string::npos ) {
-        boost::replace_all(bDiscr_flav, bDiscr, "pfDeepCSVJetTagsProbB") ; 
-        bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") );
-      }
-      else if ( bDiscr.find("pfDeepFlavourJetTags:probbb") != std::string::npos ) continue; //// We will sum the DeepCSV::probbb and DeepCSV::probb together
-      if ( bDiscr.find("pfDeepFlavourJetTags:probb") != std::string::npos ) {
-        boost::replace_all(bDiscr_flav, bDiscr, "pfDeepFlavourJetTagsProbB") ;
-        bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepFlavourJetTags:probb") + jet->bDiscriminator("pfDeepFlavourJetTags:probbb") );
-      }
-      else bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
+	  if ( bDiscr.find("pfDeepCSVJetTags:probbb") != std::string::npos ) continue; //// We will sum the DeepCSV::probbb and DeepCSV::probb together
+	  if ( bDiscr.find("pfDeepCSVJetTags:probb") != std::string::npos ) {
+	    boost::replace_all(bDiscr_flav, bDiscr, "pfDeepCSVJetTagsProbB") ; 
+	    bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepCSVJetTags:probb") + jet->bDiscriminator("pfDeepCSVJetTags:probbb") );
+	  }
+	  else if ( bDiscr.find("pfDeepFlavourJetTags:probbb") != std::string::npos ) continue; //// We will sum the DeepCSV::probbb and DeepCSV::probb together
+	  if ( bDiscr.find("pfDeepFlavourJetTags:probb") != std::string::npos ) {
+	    boost::replace_all(bDiscr_flav, bDiscr, "pfDeepFlavourJetTagsProbB") ;
+	    bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator("pfDeepFlavourJetTags:probb") + jet->bDiscriminator("pfDeepFlavourJetTags:probbb") );
+	  }
+	  else bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
+	  }
+	}
     }
-  }
 }
 
 // ------------ method called once each job just before starting event loop  ------------
-  void 
+void 
 BTaggingExerciseII::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-  void 
+void 
 BTaggingExerciseII::endJob() 
 {
 }
 
 // ------------ method called when starting to processes a run  ------------
 /*
-   void 
-   BTaggingExerciseII::beginRun(edm::Run const&, edm::EventSetup const&)
-   {
-   }
-   */
+  void 
+  BTaggingExerciseII::beginRun(edm::Run const&, edm::EventSetup const&)
+  {
+  }
+*/
 
 // ------------ method called when ending the processing of a run  ------------
 /*
-   void 
-   BTaggingExerciseII::endRun(edm::Run const&, edm::EventSetup const&)
-   {
-   }
-   */
+  void 
+  BTaggingExerciseII::endRun(edm::Run const&, edm::EventSetup const&)
+  {
+  }
+*/
 
 // ------------ method called when starting to processes a luminosity block  ------------
 /*
-   void 
-   BTaggingExerciseII::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-   {
-   }
-   */
+  void 
+  BTaggingExerciseII::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+  {
+  }
+*/
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 /*
-   void 
-   BTaggingExerciseII::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
-   {
-   }
-   */
+  void 
+  BTaggingExerciseII::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+  {
+  }
+*/
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void

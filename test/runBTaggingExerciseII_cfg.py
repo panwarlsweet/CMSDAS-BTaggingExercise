@@ -13,7 +13,7 @@ options.register('reportEvery', 10,
     VarParsing.varType.int,
     "Report every N events (default is N=10)"
 )
-options.register('outputFilename', 'exerciseII_histos_posEta.root',
+options.register('outputFilename', 'exerciseII_histos.root',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "Output file name"
