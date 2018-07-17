@@ -36,12 +36,11 @@ options.parseArguments()
 
 process = cms.Process("real")
 
-
 process.load("Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff")
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
+process.GlobalTag = GlobalTag(process.GlobalTag, '101X_upgrade2018_realistic_HEmiss_v1')
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
@@ -52,11 +51,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 ## Input files
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        # /TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        #'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0806AB92-99BE-E611-9ECD-0025905A6138.root'
-        #  '/store/mc/RunIISummer17MiniAOD/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10_ext1-v1/110000/004132F1-7785-E711-A143-008CFAFC53C6.root'
-        #'file:/afs/cern.ch/work/l/lata/public/941021E6-1FCF-E511-969E-FA163E8CF0DE.root'
-        '/store/mc/RunIIFall15MiniAODv2/BulkGravTohhTohbbhbb_narrow_M-3000_13TeV-madgraph/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/10000/52AAADC4-16CF-E511-8808-842B2B765E01.root','/store/mc/RunIIFall15MiniAODv2/BulkGravTohhTohbbhbb_narrow_M-3000_13TeV-madgraph/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/10000/96020602-17CF-E511-BFDE-C45444922988.root'  
+  '/store/relval/CMSSW_10_1_7/RelValTTbar_13/MINIAODSIM/PU25ns_101X_upgrade2018_realistic_HEmiss_v1-v1/10000/6002343D-1780-E811-906C-0CC47A7C3422.root'
    )
 
 )
@@ -64,7 +59,6 @@ process.source = cms.Source("PoolSource",
 if options.process == "QCD":
     process.source.fileNames = [
         # /QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_magnetOn_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM
-        'root://cmseos.fnal.gov//store/user/cmsdas/2017/short_exercises/BTagging/PUFlat0to70_80X_mcRun2_asymptotic_2016_TrancheIV_v4-v1/50000/00BC8956-278B-E611-99AD-0CC47A4D763C.root'
     ]
 
 ## Output file
@@ -96,25 +90,24 @@ bTagDiscriminators = [
     'pfCombinedSecondaryVertexV2BJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
     'pfCombinedMVAV2BJetTags',
-    'pfDeepCSVJetTags:probb',
-    'pfDeepCSVJetTags:probbb'
-  #  'pfDeepCSVJetTags:probb+pfDeepCSVJetTags:probbb'
+    'pfDeepCSVJetTags',
+    'pfDeepFlavourJetTags'
 
 ]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 ## Update the slimmedJets in miniAOD: corrections from the chosen Global Tag are applied and the b-tag discriminators are re-evaluated
-updateJetCollection(
+"""updateJetCollection(
     process,
     jetSource = cms.InputTag('slimmedJets'),
     jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
     btagDiscriminators = bTagDiscriminators
-)
+)"""
 
 
 ## Initialize analyzer
 process.bTaggingExerciseII = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
+    jets = cms.InputTag('slimmedJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -125,7 +118,8 @@ process.bTaggingExerciseII = cms.EDAnalyzer('BTaggingExerciseII',
         'pfCombinedSecondaryVertexV2BJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
         'pfCombinedMVABJetTags',
-        'pfDeepCSVJetTags'
+        'pfDeepCSVJetTags',
+        'pfDeepFlavourJetTags'
     )
 )
 
