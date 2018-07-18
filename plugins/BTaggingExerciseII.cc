@@ -148,8 +148,8 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       // fill discriminator histograms
       for( const std::string &bDiscr : bDiscriminators_ )
 	{
-	  if( jet->pt()<=30. || abs(jet->eta())>2.5 || jet->phi()<-1.8 || jet->phi()>-0.6) continue; // skip jets with low pT or outside the tracker acceptance
-	   if (jet->eta() >= -2.5 && jet->eta() <= -1.5){
+	  if( jet->pt()<=30. || abs(jet->eta())>2.5) continue; // skip jets with low pT or outside the tracker acceptance
+ 	   //if (jet->eta() >= -2.5 && jet->eta() <= -1.5){
 	  //if (jet->eta() <= 2.5 && jet->eta() >= 1.5){
 	  if( flavor==5 ) // b jet
 	    bDiscr_flav = bDiscr + "_b";
@@ -170,7 +170,7 @@ BTaggingExerciseII::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  }
 	  else bDiscriminatorsMap[bDiscr_flav]->Fill( jet->pt(), jet->bDiscriminator(bDiscr) );
 	  }
-	}
+	//}
     }
 }
 

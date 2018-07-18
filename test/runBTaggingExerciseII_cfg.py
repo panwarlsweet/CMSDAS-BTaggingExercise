@@ -13,7 +13,7 @@ options.register('reportEvery', 10,
     VarParsing.varType.int,
     "Report every N events (default is N=10)"
 )
-options.register('outputFilename', 'exerciseII_histos.root',
+options.register('outputFilename', 'exerciseII_histos_negEta.root',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "Output file name"
@@ -98,17 +98,17 @@ bTagDiscriminators = [
     'pfDeepFlavourJetTags:probb',
     'pfDeepFlavourJetTags:probbb',
     'pfDeepFlavourJetTags:probc',
-    'pfDeepFlavourJetTags:probudsg'
+    'pfDeepFlavourJetTags:probuds'
 ]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 ## Update the slimmedJets in miniAOD: corrections from the chosen Global Tag are applied and the b-tag discriminators are re-evaluated
-"""updateJetCollection(
+updateJetCollection(
     process,
     jetSource = cms.InputTag('slimmedJets'),
     jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
     btagDiscriminators = bTagDiscriminators
-)"""
+)
 
 """updateJetCollection(
     process,
@@ -128,7 +128,7 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 ## Initialize analyzer
 process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
-    jets = cms.InputTag('slimmedJets'), # input jet collection name
+    jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',
         'pfTrackCountingHighPurBJetTags',
@@ -146,7 +146,7 @@ process.bTaggingExerciseIIAK4Jets = cms.EDAnalyzer('BTaggingExerciseII',
         'pfDeepFlavourJetTags:probb',
         'pfDeepFlavourJetTags:probbb',
         'pfDeepFlavourJetTags:probc',
-        'pfDeepFlavourJetTags:probudsg'          
+        'pfDeepFlavourJetTags:probuds'          
     )
 )
 
